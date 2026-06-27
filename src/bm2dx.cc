@@ -89,7 +89,7 @@ auto bm2dx::init(const std::span<std::uint8_t> region) -> void
     hk_bar_text_check_addr = memory::find(region, "0F 87 ? ? ? ? 41 81 C0");
     log::misc("found bar text render check at {}", fmt::ptr(hk_bar_text_check_addr));
 
-    hk_bar_text_render_addr = memory::find(region, "45 8B CD B9 ? ? ? ? [E8] ? ? ? ? 90");
+    hk_bar_text_render_addr = memory::find(region, "45 8B ? B9 ? ? ? ? [E8] ? ? ? ? 90");
     log::misc("found bar text render call at {}", fmt::ptr(hk_bar_text_render_addr));
 
     hk_bar_populate_addr = follow_find(region, "E8 ? ? ? ? 48 C7 83 ? ? ? ? ? ? ? ? 48 8B C3");
