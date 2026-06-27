@@ -1,0 +1,47 @@
+name: Build (GCC)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11.6
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2.32.0
+        with:
+          msystem: UCRT64
+          update: true
+          install: mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake git
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build/ \
+            -DVCPKG_TARGET_TRIPLET=x64-mingw-static \
+            -DVCPKG_HOST_TRIPLET=x64-mingw-static \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE="vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-static -static-libstdc++ -Wl,--exclude-all-symbols -Wl,--gc-sections -s"
+
+      - name: Build with CMake
+        run: |
+          cmake --build build/ --config Release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: playlister-gcc-x64-static
+          path: build/playlister.dll

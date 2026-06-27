@@ -1,0 +1,6 @@
+LIBRARY "avs2-core.dll"
+
+EXPORTS
+    log_body_warning @380 NONAME
+    log_body_info @381 NONAME
+    log_body_misc @382 NONAME
