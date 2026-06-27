@@ -98,6 +98,9 @@ auto bm2dx::init(const std::span<std::uint8_t> region) -> void
     hk_get_definition_addr = follow_find(region, "E8 ? ? ? ? 0F B6 70");
     log::misc("found category definition getter at {}", fmt::ptr(hk_get_definition_addr));
 
+    hk_category_lookup_addr = follow_find(region, "E8 ? ? ? ? 8B 4C 24 ? 44 8B CD");
+    log::misc("found category lookup function at {}", fmt::ptr(hk_category_lookup_addr));
+
     hk_folder_voice_id_addr = backtrack_prologue(memory::find(region, "8B 04 88 48 8B 5C 24"), 128);
     log::misc("found folder voice play function at {}", fmt::ptr(hk_folder_voice_id_addr));
 

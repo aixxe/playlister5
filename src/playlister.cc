@@ -21,6 +21,7 @@ auto static hk_bar_text_check = safetyhook::MidHook {};
 auto static hk_bar_text_render = safetyhook::MidHook {};
 auto static hk_bar_populate = safetyhook::InlineHook {};
 auto static hk_get_definition = safetyhook::InlineHook {};
+auto static hk_category_lookup = safetyhook::InlineHook {};
 auto static hk_folder_voice_id = safetyhook::InlineHook {};
 auto static hk_music_select_init = safetyhook::InlineHook {};
 
@@ -285,6 +286,17 @@ auto static hk_fn_folder_voice_id(CCustomizeGameData* base, int category) -> int
 }
 
 /**
+ * Redirect category lookup to our custom categories, required for searching
+ */
+auto static hk_fn_category_lookup(CCategoryGameData* base, int category, int a3) -> void*
+{
+    if (is_custom_category(category))
+        return &g_categories[get_custom_index(category)];
+
+    return hk_category_lookup.call<void*>(base, category, a3);
+}
+
+/**
  * Display various badges on our custom categories
  */
 template <auto& hook, auto badge>
@@ -364,6 +376,7 @@ auto static init(std::uint8_t* module) -> void
     hk_bar_text_render = safetyhook::create_mid(hk_bar_text_render_addr, hk_fn_bar_text_render);
     hk_bar_populate = safetyhook::create_inline(hk_bar_populate_addr, &hk_fn_bar_populate);
     hk_get_definition = safetyhook::create_inline(hk_get_definition_addr, &hk_fn_get_definition);
+    hk_category_lookup = safetyhook::create_inline(hk_category_lookup_addr, &hk_fn_category_lookup);
     hk_folder_voice_id = safetyhook::create_inline(hk_folder_voice_id_addr, &hk_fn_folder_voice_id);
     hk_music_select_init = safetyhook::create_inline(hk_music_select_init_addr, &hk_fn_music_select_init);
 

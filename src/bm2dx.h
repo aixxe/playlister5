@@ -188,6 +188,7 @@ namespace bm2dx
     inline std::uint8_t* hk_bar_text_render_addr   = {};
     inline std::uint8_t* hk_bar_populate_addr      = {};
     inline std::uint8_t* hk_get_definition_addr    = {};
+    inline std::uint8_t* hk_category_lookup_addr   = {};
     inline std::uint8_t* hk_folder_voice_id_addr   = {};
     inline std::uint8_t* hk_music_select_init_addr = {};
 
