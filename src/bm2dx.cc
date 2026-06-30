@@ -101,8 +101,14 @@ auto bm2dx::init(const std::span<std::uint8_t> region) -> void
     hk_category_lookup_addr = follow_find(region, "E8 ? ? ? ? 8B 4C 24 ? 44 8B CD");
     log::misc("found category lookup function at {}", fmt::ptr(hk_category_lookup_addr));
 
+    hk_active_category_addr = follow_find(region, "E8 ? ? ? ? 33 F6 48 8B F8");
+    log::misc("found active category getter at {}", fmt::ptr(hk_active_category_addr));
+
     hk_folder_voice_id_addr = backtrack_prologue(memory::find(region, "8B 04 88 48 8B 5C 24"), 128);
     log::misc("found folder voice play function at {}", fmt::ptr(hk_folder_voice_id_addr));
+
+    hk_close_categories_addr = follow_find(region, "E8 ? ? ? ? 66 C7 43 ? ? ? E8");
+    log::misc("found category close function at {}", fmt::ptr(hk_close_categories_addr));
 
     hk_music_select_init_addr = backtrack_prologue(memory::find(region, "48 83 EC 30 48 8B D9 89 11 E8"), 32);
     log::misc("found music select initialize function at {}", fmt::ptr(hk_music_select_init_addr));
@@ -113,6 +119,9 @@ auto bm2dx::init(const std::span<std::uint8_t> region) -> void
     log::misc("  - tournament => {}", fmt::ptr(hk_badge_tournament_addr));
     log::misc("  - kac        => {}", fmt::ptr(hk_badge_kac_addr));
     log::misc("  - featured   => {}", fmt::ptr(hk_badge_featured_addr));
+
+    active_category_id_offset = *reinterpret_cast<std::uint32_t*>(memory::find(region, "89 88 [?] ? ? ? 48 8B 5C 24"));
+    log::misc("found offset to active category id at CCategoryGameData+{:#x}", active_category_id_offset);
 
     init_category_bar = follow_find<decltype(init_category_bar)>(region, "E8 ? ? ? ? FF C3 48 81 C7 ? ? ? ? 81 FB");
     log::misc("found category initialize function at {}", fmt::ptr(init_category_bar));

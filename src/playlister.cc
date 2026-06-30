@@ -22,7 +22,9 @@ auto static hk_bar_text_render = safetyhook::MidHook {};
 auto static hk_bar_populate = safetyhook::InlineHook {};
 auto static hk_get_definition = safetyhook::InlineHook {};
 auto static hk_category_lookup = safetyhook::InlineHook {};
+auto static hk_active_category = safetyhook::InlineHook {};
 auto static hk_folder_voice_id = safetyhook::InlineHook {};
+auto static hk_close_categories = safetyhook::InlineHook {};
 auto static hk_music_select_init = safetyhook::InlineHook {};
 
 auto static hk_badge_weekly = safetyhook::InlineHook {};
@@ -297,6 +299,25 @@ auto static hk_fn_category_lookup(CCategoryGameData* base, int category, int a3)
 }
 
 /**
+ * Return proper pointer to category when the active category is custom
+ */
+auto static hk_fn_active_category(CCategoryGameData* base) -> category*
+{
+    auto const active_category_id = *reinterpret_cast<std::int32_t*>
+        (reinterpret_cast<std::uint8_t*>(base) + active_category_id_offset);
+
+    if (is_custom_category(active_category_id))
+    {
+        auto const index = get_custom_index(active_category_id);
+
+        if (index >= 0 && index < static_cast<int>(g_categories.size()))
+            return &g_categories[index];
+    }
+
+    return hk_active_category.call<category*>(base);
+}
+
+/**
  * Display various badges on our custom categories
  */
 template <auto& hook, auto badge>
@@ -322,6 +343,22 @@ auto static hk_fn_music_select_init(void* a1, int a2) -> void*
     }
 
     return hk_music_select_init.call<void*>(a1, a2);
+}
+
+/**
+ * Reset state to mirror "closing" for custom categories
+ */
+auto static hk_fn_close_categories(CCategoryGameData* base, int play_style) -> void*
+{
+    auto const result = hk_close_categories.call<void*>(base, play_style);
+
+    for (auto& category: g_categories)
+    {
+        category.is_open = false;
+        category.active_bar_index = 0;
+    }
+
+    return result;
 }
 
 /**
@@ -377,7 +414,9 @@ auto static init(std::uint8_t* module) -> void
     hk_bar_populate = safetyhook::create_inline(hk_bar_populate_addr, &hk_fn_bar_populate);
     hk_get_definition = safetyhook::create_inline(hk_get_definition_addr, &hk_fn_get_definition);
     hk_category_lookup = safetyhook::create_inline(hk_category_lookup_addr, &hk_fn_category_lookup);
+    hk_active_category = safetyhook::create_inline(hk_active_category_addr, &hk_fn_active_category);
     hk_folder_voice_id = safetyhook::create_inline(hk_folder_voice_id_addr, &hk_fn_folder_voice_id);
+    hk_close_categories = safetyhook::create_inline(hk_close_categories_addr, &hk_fn_close_categories);
     hk_music_select_init = safetyhook::create_inline(hk_music_select_init_addr, &hk_fn_music_select_init);
 
     hk_badge_weekly = safetyhook::create_inline(hk_badge_weekly_addr, &hook_get_badge<hk_badge_weekly, BAR_BADGE_WEEKLY>);

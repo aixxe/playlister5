@@ -183,19 +183,23 @@ namespace bm2dx
         /* 0x0090 */ vector<category*> dp_bars;
     }; static_assert(sizeof(category_group) == 0xA8);
 
-    inline std::uint8_t* hk_clear_lamp_addr        = {};
-    inline std::uint8_t* hk_bar_text_check_addr    = {};
-    inline std::uint8_t* hk_bar_text_render_addr   = {};
-    inline std::uint8_t* hk_bar_populate_addr      = {};
-    inline std::uint8_t* hk_get_definition_addr    = {};
-    inline std::uint8_t* hk_category_lookup_addr   = {};
-    inline std::uint8_t* hk_folder_voice_id_addr   = {};
-    inline std::uint8_t* hk_music_select_init_addr = {};
+    inline std::uint8_t* hk_clear_lamp_addr         = {};
+    inline std::uint8_t* hk_bar_text_check_addr     = {};
+    inline std::uint8_t* hk_bar_text_render_addr    = {};
+    inline std::uint8_t* hk_bar_populate_addr       = {};
+    inline std::uint8_t* hk_get_definition_addr     = {};
+    inline std::uint8_t* hk_category_lookup_addr    = {};
+    inline std::uint8_t* hk_active_category_addr    = {};
+    inline std::uint8_t* hk_folder_voice_id_addr    = {};
+    inline std::uint8_t* hk_close_categories_addr   = {};
+    inline std::uint8_t* hk_music_select_init_addr  = {};
 
-    inline std::uint8_t* hk_badge_weekly_addr      = {};
-    inline std::uint8_t* hk_badge_featured_addr    = {};
-    inline std::uint8_t* hk_badge_tournament_addr  = {};
-    inline std::uint8_t* hk_badge_kac_addr         = {};
+    inline std::uint8_t* hk_badge_weekly_addr       = {};
+    inline std::uint8_t* hk_badge_featured_addr     = {};
+    inline std::uint8_t* hk_badge_tournament_addr   = {};
+    inline std::uint8_t* hk_badge_kac_addr          = {};
+
+    inline std::ptrdiff_t active_category_id_offset = {};
 
     auto inline (*init_category_bar) (void*, int) -> bool {};
     auto inline (*get_music_entry) (int) -> void* {};
