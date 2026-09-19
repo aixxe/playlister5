@@ -107,10 +107,10 @@ auto bm2dx::init(const std::span<std::uint8_t> region) -> void
     hk_folder_voice_id_addr = backtrack_prologue(memory::find(region, "8B 04 88 48 8B 5C 24"), 128);
     log::misc("found folder voice play function at {}", fmt::ptr(hk_folder_voice_id_addr));
 
-    hk_close_categories_addr = follow_find(region, "E8 ? ? ? ? 66 C7 43 ? ? ? E8");
+    hk_close_categories_addr = backtrack_prologue(memory::find(region, "40 88 70 F0 89 30 48 05 D0 00 00 00"), 128);
     log::misc("found category close function at {}", fmt::ptr(hk_close_categories_addr));
 
-    hk_music_select_init_addr = backtrack_prologue(memory::find(region, "48 83 EC 30 48 8B D9 89 11 E8"), 32);
+    hk_music_select_init_addr = follow_find(region, "41 8D 50 02 [E8] ? ? ? ? 49 8D 4C 24 60");
     log::misc("found music select initialize function at {}", fmt::ptr(hk_music_select_init_addr));
 
     find_bar_badge_hooks(region);

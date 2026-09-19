@@ -10,6 +10,7 @@ Enables creation of custom categories in beatmania IIDX
 
 The same `playlister.dll` file can be used across all supported games:
 
+- beatmania IIDX 34 ZINRAI
 - beatmania IIDX 33 Sparkle Shower
 - beatmania IIDX 32 Pinky Crush
 
